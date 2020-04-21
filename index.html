@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Memory Game</title>
+</head>
+
+<body>
+  <div class="container">
+    <h3>Score: <span id="result"></span></h3>
+
+    <div class="grid">
+
+    </div>
+
+  </div>
+
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      perspective: 1000px;
+    }
+
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      height: 300px;
+      width: 440px;
+      /* justify-content: space-between; */
+    }
+
+    .card {
+      transform-style: preserve-3d;
+      transition: transform 1s;
+      /* backface-visibility: hidden; */
+    }
+
+    .card.flip {
+      transform: rotateY(180deg)
+    }
+  </style>
+
+  <script>
+    const cardArray = [
+      {
+        name: 'cheeseburger',
+        img: 'images/cheeseburger.png'
+      },
+      {
+        name: 'cheeseburger',
+        img: 'images/cheeseburger.png'
+      },
+      {
+        name: 'fries',
+        img: 'images/fries.png'
+      },
+      {
+        name: 'fries',
+        img: 'images/fries.png'
+      },
+      {
+        name: 'hotdog',
+        img: 'images/hotdog.png'
+      },
+      {
+        name: 'hotdog',
+        img: 'images/hotdog.png'
+      },
+      {
+        name: 'ice-cream',
+        img: 'images/ice-cream.png'
+      },
+      {
+        name: 'ice-cream',
+        img: 'images/ice-cream.png'
+      },
+      {
+        name: 'milkshake',
+        img: 'images/milkshake.png'
+      },
+      {
+        name: 'milkshake',
+        img: 'images/milkshake.png'
+      },
+      {
+        name: 'pizza',
+        img: 'images/pizza.png'
+      },
+      {
+        name: 'pizza',
+        img: 'images/pizza.png'
+      }
+    ];
+
+    cardArray.sort(() => 0.5 - Math.random())
+
+    const grid = document.querySelector('.grid');
+    const result = document.querySelector('#result');
+    let cardChosen = [];
+    let points = 0;
+
+    function createBoard() {
+      cardArray.forEach((card, i) => {
+        const cardImg = document.createElement('img');
+        card.id = i;
+        cardImg.classList.add('card');
+        cardImg.setAttribute('src', 'images/blank.png');
+        cardImg.setAttribute('data-id', i);
+        cardImg.addEventListener('click', flipCard);
+        // cardImg.addEventListener('transitionend', () => alert('oi'));
+        grid.appendChild(cardImg);
+      })
+    }
+
+    function checkForMatch() {
+      const cards = document.querySelectorAll('img');
+
+      const [card1, card2] = cardChosen;
+
+      if (card1.name === card2.name) {
+        // alert('You found a match!');
+        cards[card1.id].setAttribute('src', 'images/white.png');
+        cards[card2.id].setAttribute('src', 'images/white.png');
+        points++;
+      }
+      else {
+        // alert('Sorry, try again')
+        cards[card1.id].setAttribute('src', 'images/blank.png');
+        cards[card2.id].setAttribute('src', 'images/blank.png');
+      }
+
+      cardChosen = [];
+      result.textContent = points;
+
+      if (points === cardArray.length / 2) {
+        result.textContent = 'Congratulations! You found them all!';
+      }
+
+    }
+
+    function flipCard() {
+      let cardId = this.dataset.id;
+      cardChosen.push(cardArray[cardId]);
+      this.setAttribute('src', cardArray[cardId].img)
+      this.classList.toggle('flip')
+
+      if (cardChosen.length === 2) {
+        setTimeout(checkForMatch, 500);
+      }
+    }
+
+    createBoard();
+  </script>
+</body>
+
+</html>
